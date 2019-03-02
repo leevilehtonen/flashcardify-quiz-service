@@ -36,9 +36,7 @@
     "watch": "nodemon start",
     "lint": "tslint -p tsconfig.json",
     "fix": "tslint -p tsconfig.json --fix",
-    "build": "tsc -p tsconfig.json",
-    "docker-build": "docker build . -t flashcardify-quizzes-service --rm",
-    "docker-run": "docker run -it -p 80:80 --env-file .env --name flashcardify-quizzes-service-container flashcardify-quizzes-service"
+    "build": "tsc -p tsconfig.json"
   },
   "main": "index.ts",
   "repository": {

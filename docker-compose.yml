@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: flashcardify-quiz-service-db
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  
+  api:
+    build: 
+      context: .
+      target: base
+    command: npm run watch
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+    ports:
+      - 3000:3000
+    depends_on: 
+      - postgres
+    environment:
+      NODE_ENV: development
+      SERVICE_PORT: 3000
+      DB_USER: postgres
+      DB_PASSWORD: secret
+      DB_HOST: db
+      DB_DATABASE: flashcardify-quiz-service-db
+      DB_PORT: 5432
+
+
+
+  
