@@ -1,7 +1,7 @@
-import { JsonController, Get, Post, Put, Delete, Body, Param } from "routing-controllers";
+import { JsonController, Get, Post, Put, Delete, Body, Param, QueryParam } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { Quiz } from "../entity/Quiz";
-import { Flashcard } from "../entity/Flashacard";
+import { Flashcard } from "../entity/Flashcard";
 
 @JsonController("/quizzes")
 class QuizController {
@@ -11,8 +11,12 @@ class QuizController {
   }
 
   @Get("/:id")
-  public async getOne(@Param("id") id: number) {
-    return getRepository(Quiz).findOne(id, { relations: ["flashcards"] });
+  public async getOne(@Param("id") id: number, @QueryParam("flashcards") showFlashcards: boolean) {
+    if (showFlashcards) {
+      return getRepository(Quiz).findOne(id, { relations: ["flashcards"] });
+    } else {
+      return getRepository(Quiz).findOne(id);
+    }
   }
 
   @Post()

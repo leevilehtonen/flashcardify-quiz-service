@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { Flashcard } from "./Flashacard";
+import { Flashcard } from "./Flashcard";
 
 export enum Visibility {
   PUBLIC = "public",
@@ -7,11 +7,11 @@ export enum Visibility {
 }
 
 export enum Difficulty {
-  TRIVIAL = "trivial",
-  EASY = "easy",
-  MEDIUM = "medium",
-  HARD = "hard",
-  IMPOSSIBLE = "impossible",
+  TRIVIAL = "Trivial",
+  EASY = "Easy",
+  MEDIUM = "Medium",
+  HARD = "Hard",
+  IMPOSSIBLE = "Impossible",
 }
 
 @Entity()
@@ -40,7 +40,10 @@ export class Quiz {
   @Column("bigint", { default: 0 })
   public successes: bigint;
 
-  @Column("decimal", { default: 0 })
+  @Column("bigint", { default: 0 })
+  public ratings: bigint;
+
+  @Column("decimal", { default: 0.0 })
   public rating: number;
 
   @Column("enum", { enum: Difficulty, default: Difficulty.MEDIUM })

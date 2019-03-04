@@ -1,7 +1,7 @@
 import { ConnectionOptions, createConnection, Connection, getRepository, getConnection } from "typeorm";
 import { Quiz } from "../entity/Quiz";
 import MOCK_DATA from "../../MOCK_DATA.json";
-import { Flashcard } from "../entity/Flashacard";
+import { Flashcard } from "../entity/Flashcard";
 import { DBlogger } from "./logger";
 
 const connectionOptions: ConnectionOptions = {
