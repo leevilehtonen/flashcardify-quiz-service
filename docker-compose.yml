@@ -26,9 +26,9 @@ services:
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json
     ports:
-      - 3000:3000
+      - 3001:3000
     depends_on: 
-      - postgres
+      - db
     environment:
       NODE_ENV: development
       SERVICE_PORT: 3000

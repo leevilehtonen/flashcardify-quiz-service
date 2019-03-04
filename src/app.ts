@@ -8,25 +8,34 @@ import * as Messages from "./utils/messages";
 
 const app: express.Application = express();
 
-app.use(expressWinston.logger({ winstonInstance: logger }));
-useExpressServer(app, {
-  routePrefix: "/api",
-  cors: true,
-  controllers: [QuizController],
-});
-app.use(expressWinston.errorLogger({ winstonInstance: logger }));
-
-app.listen(process.env.SERVICE_PORT, () => {
-  return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT}`);
-});
-
-logger.info(`Connecting to database with ${DB.connectionOptionsLog()}`);
-
-DB.connection
-  .then(() => {
+const setup = async () => {
+  try {
+    // Setup DB connections
+    logger.info(`Connecting to database with ${DB.connectionOptionsLog()}`);
+    await DB.connect();
     logger.info(Messages.DB_SUCCESS);
-  })
-  .catch(err => {
-    logger.error(`${Messages.DB_FAILED}, error: ${JSON.stringify(err)}`);
-  });
+    await DB.populateMockdata();
+  } catch (error) {
+    logger.error(JSON.stringify({ title: Messages.DB_FAILED, error }));
+  }
+
+  try {
+    // Setup API
+    app.use(expressWinston.logger({ winstonInstance: logger }));
+    useExpressServer(app, {
+      routePrefix: "/api",
+      cors: true,
+      controllers: [QuizController],
+    });
+    app.use(expressWinston.errorLogger({ winstonInstance: logger }));
+    app.listen(process.env.SERVICE_PORT, () => {
+      return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT}`);
+    });
+  } catch (error) {
+    logger.error(JSON.stringify({ title: Messages.APP_FAILED, error }));
+  }
+};
+
+setup();
+
 export default app;
