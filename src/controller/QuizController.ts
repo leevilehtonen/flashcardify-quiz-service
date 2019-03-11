@@ -1,22 +1,28 @@
-import { JsonController, Get, Post, Put, Delete, Body, Param, QueryParam } from "routing-controllers";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParam } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { Quiz } from "../entity/Quiz";
-import { Flashcard } from "../entity/Flashcard";
+import { getQuizAndFlashcardsByQuizId, getQuizByQuizId, getQuizzesByPage } from "../service/QuizService";
+import { getRatingForQuiz } from "../service/RatingService";
 
 @JsonController("/quizzes")
 class QuizController {
   @Get("/")
-  public async getAll() {
-    return getRepository(Quiz).find();
+  public async getAll(
+    @QueryParam("page") page: number = 0,
+    @QueryParam("quizzesPerPage") quizzesPerPage: number = 15,
+    @QueryParam("order") order: string = "updated",
+    @QueryParam("direction") direction: string = "DESC",
+  ) {
+    const [quizzes, count] = await getQuizzesByPage(page, quizzesPerPage, order, direction);
+    return { quizzes, count };
   }
 
   @Get("/:id")
-  public async getOne(@Param("id") id: number, @QueryParam("flashcards") showFlashcards: boolean) {
-    if (showFlashcards) {
-      return getRepository(Quiz).findOne(id, { relations: ["flashcards"] });
-    } else {
-      return getRepository(Quiz).findOne(id);
-    }
+  public async getOne(@Param("id") id: number, @QueryParam("flashcards") withFlashcards: boolean = false) {
+    const quiz = withFlashcards ? await getQuizAndFlashcardsByQuizId(id) : await getQuizByQuizId(id);
+    const rating = await getRatingForQuiz(id);
+    Object.assign(quiz, rating);
+    return quiz;
   }
 
   @Post()
@@ -26,7 +32,7 @@ class QuizController {
 
   @Put("/:id")
   public async put(@Param("id") id: number, @Body() quiz: Quiz) {
-    const target = await getRepository(Quiz).findOne(id);
+    const target = await getQuizAndFlashcardsByQuizId(id);
     Object.assign(target, quiz);
     return getRepository(Quiz).save(target);
   }

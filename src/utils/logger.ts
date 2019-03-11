@@ -3,7 +3,7 @@ import { Logger, QueryRunner } from "typeorm";
 
 const logger = winston.createLogger({
   format: format.combine(format.timestamp(), format.json(), format.prettyPrint()),
-  level: "info",
+  level: "debug",
   defaultMeta: { service: process.env.npm_package_name },
   transports: [new winston.transports.Console()],
 });

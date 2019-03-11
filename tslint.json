@@ -6,7 +6,7 @@
     "no-console": false,
     "no-submodule-imports": false,
     "object-literal-sort-keys": false,
-    "prettier": true,
+    "prettier": [true, ".prettierrc"],
     "prefer-template": true
   },
   "rulesDirectory": []

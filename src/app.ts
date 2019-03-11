@@ -21,6 +21,11 @@ const setup = async () => {
 
   try {
     // Setup API
+    app.use((req, res, next) => {
+      setTimeout(() => {
+        next();
+      }, 1000);
+    });
     app.use(expressWinston.logger({ winstonInstance: logger }));
     useExpressServer(app, {
       routePrefix: "/api",

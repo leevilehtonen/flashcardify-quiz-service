@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
   "include": ["src/**/*", "test/**/*"]
 }
