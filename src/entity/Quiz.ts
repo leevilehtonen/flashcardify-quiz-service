@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Flashcard } from "./Flashcard";
 import { Rating } from "./Rating";
 
@@ -39,10 +39,10 @@ export class Quiz {
   public isPublic: boolean;
 
   @Column("integer", { default: 0 })
-  public tries: bigint;
+  public tries: number;
 
   @Column("integer", { default: 0 })
-  public successes: bigint;
+  public successes: number;
 
   @Column("enum", { enum: Difficulty, default: Difficulty.MEDIUM })
   public difficulty: Difficulty;

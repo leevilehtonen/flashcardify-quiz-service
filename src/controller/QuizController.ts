@@ -21,8 +21,8 @@ class QuizController {
   public async getOne(@Param("id") id: number, @QueryParam("flashcards") withFlashcards: boolean = false) {
     const quiz = withFlashcards ? await getQuizAndFlashcardsByQuizId(id) : await getQuizByQuizId(id);
     const rating = await getRatingForQuiz(id);
-    Object.assign(quiz, rating);
-    return quiz;
+    const target = Object.assign({}, quiz, rating);
+    return target;
   }
 
   @Post()
@@ -31,9 +31,9 @@ class QuizController {
   }
 
   @Put("/:id")
-  public async put(@Param("id") id: number, @Body() quiz: Quiz) {
-    const target = await getQuizAndFlashcardsByQuizId(id);
-    Object.assign(target, quiz);
+  public async put(@Param("id") id: number, @Body() newQuiz: Quiz) {
+    const currentQuiz = await getQuizAndFlashcardsByQuizId(id);
+    const target = Object.assign({}, currentQuiz, newQuiz);
     return getRepository(Quiz).save(target);
   }
 
