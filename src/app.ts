@@ -5,8 +5,6 @@ import QuizController from "./controller/QuizController";
 import logger from "./utils/logger";
 import * as DB from "./utils/db";
 import * as Messages from "./utils/messages";
-import PredictController from "./controller/PredictController";
-import RatingController from "./controller/RatingController";
 
 const app: express.Application = express();
 
@@ -32,7 +30,7 @@ const setup = async () => {
     useExpressServer(app, {
       routePrefix: "/api",
       cors: true,
-      controllers: [QuizController, PredictController, RatingController],
+      controllers: [QuizController],
     });
     app.use(expressWinston.errorLogger({ winstonInstance: logger }));
     app.listen(process.env.SERVICE_PORT, () => {

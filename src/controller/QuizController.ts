@@ -1,45 +1,78 @@
 import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParam } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { Quiz } from "../entity/Quiz";
-import { getQuizAndFlashcardsByQuizId, getQuizByQuizId, getQuizzesByPage } from "../service/QuizService";
-import { getRatingForQuiz } from "../service/RatingService";
+import { Rating } from "../entity/Rating";
+import { getRatingStatsForQuiz } from "../service/QueryService";
+import { Flashcard } from "../entity/Flashcard";
 
 @JsonController("/quizzes")
 class QuizController {
   @Get("/")
-  public async getAll(
+  public async getAllQuizzes(
     @QueryParam("page") page: number = 0,
-    @QueryParam("quizzesPerPage") quizzesPerPage: number = 15,
-    @QueryParam("order") order: string = "updated",
-    @QueryParam("direction") direction: string = "DESC",
+    @QueryParam("sort") sort: string = "updated_desc",
+    @QueryParam("perPage") perPage: number = 15,
   ) {
-    const [quizzes, count] = await getQuizzesByPage(page, quizzesPerPage, order, direction);
-    return { quizzes, count };
+    return getRepository(Quiz).findAndCount({
+      skip: page * perPage,
+      take: perPage,
+      order: { [sort.split("_")[0]]: sort.split("_")[1].toUpperCase() },
+    });
   }
 
-  @Get("/:id")
-  public async getOne(@Param("id") id: number, @QueryParam("flashcards") withFlashcards: boolean = false) {
-    const quiz = withFlashcards ? await getQuizAndFlashcardsByQuizId(id) : await getQuizByQuizId(id);
-    const rating = await getRatingForQuiz(id);
-    const target = Object.assign({}, quiz, rating);
-    return target;
+  @Get("/:quizId")
+  public async getOneQuiz(@Param("quizId") quizId: number) {
+    return getRepository(Quiz).findOne(quizId);
   }
 
-  @Post()
-  public async post(@Body() quiz: Quiz) {
+  @Post("/")
+  public async createQuiz(@Body() quiz: Quiz) {
     return getRepository(Quiz).save(quiz);
   }
 
-  @Put("/:id")
-  public async put(@Param("id") id: number, @Body() newQuiz: Quiz) {
-    const currentQuiz = await getQuizAndFlashcardsByQuizId(id);
-    const target = Object.assign({}, currentQuiz, newQuiz);
-    return getRepository(Quiz).save(target);
+  @Put("/:quizId")
+  public async updateQuiz(@Param("quizId") quizId: number, @Body() newQuiz: Quiz) {
+    return getRepository(Quiz).save({ id: quizId, ...newQuiz });
   }
 
-  @Delete("/:id")
-  public async remove(@Param("id") id: number) {
-    return getRepository(Quiz).delete(id);
+  @Delete("/:quizId")
+  public async removeQuiz(@Param("quizId") quizId: number) {
+    return getRepository(Quiz).delete(quizId);
+  }
+
+  @Get("/:quizId/flashcards")
+  public async getFlashcardsForQuiz(@Param("quizId") quizId: number) {
+    return getRepository(Flashcard).find({ quiz: { id: quizId } });
+  }
+
+  @Post("/:quizId/tries")
+  public async updateQuizTries(@Param("quizId") quizId: number) {
+    return getRepository(Quiz).increment({ id: quizId }, "tries", 1);
+  }
+
+  @Post("/:quizId/successes")
+  public async updateQuizSuccesses(@Param("quizId") quizId: number) {
+    return getRepository(Quiz).increment({ id: quizId }, "successes", 1);
+  }
+
+  @Get("/:quizId/ratings")
+  public async getRatingsForQuiz(@Param("quizId") quizId: number) {
+    return getRepository(Rating).find({ quiz: { id: quizId } });
+  }
+
+  @Get("/:quizId/ratings/stats")
+  public async getRatingStatsForQuiz(@Param("quizId") quizId: number, @QueryParam("aggregate") aggregate: string) {
+    return getRatingStatsForQuiz(quizId, aggregate);
+  }
+
+  @Get("/:quizId/ratings/:ratingId")
+  public async getOneRatingForQuiz(@Param("quizId") quizId: number) {
+    return getRepository(Rating).findOne(quizId);
+  }
+
+  @Post("/:quizId/ratings")
+  public async createRatingForQuiz(@Param("quizId") quizId: number, @Body() rating: Rating) {
+    return getRepository(Rating).save({ quiz: { id: quizId }, ...rating });
   }
 }
 export default QuizController;
