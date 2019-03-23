@@ -26,6 +26,9 @@ export class Quiz {
   @UpdateDateColumn()
   public updated: Date;
 
+  @Column("varchar", { length: 100 })
+  public image: string;
+
   @Column("integer", { nullable: true })
   public creator: number;
 

@@ -1,4 +1,4 @@
-import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParam } from "routing-controllers";
+import { Body, Delete, Get, JsonController, Param, Post, Put, QueryParam, BodyParam } from "routing-controllers";
 import { getRepository } from "typeorm";
 import { Quiz } from "../entity/Quiz";
 import { Rating } from "../entity/Rating";
@@ -60,14 +60,14 @@ class QuizController {
     return getRepository(Rating).find({ quiz: { id: quizId } });
   }
 
-  @Get("/:quizId/ratings/stats")
-  public async getRatingStatsForQuiz(@Param("quizId") quizId: number, @QueryParam("aggregate") aggregate: string) {
+  @Post("/:quizId/ratings/stats")
+  public async getRatingStatsForQuiz(@Param("quizId") quizId: number, @BodyParam("aggregate") aggregate: string) {
     return getRatingStatsForQuiz(quizId, aggregate);
   }
 
   @Get("/:quizId/ratings/:ratingId")
-  public async getOneRatingForQuiz(@Param("quizId") quizId: number) {
-    return getRepository(Rating).findOne(quizId);
+  public async getOneRatingForQuiz(@Param("quizId") quizId: number, @Param("ratingId") ratingId: number) {
+    return getRepository(Rating).findOne({ quiz: { id: quizId }, id: ratingId });
   }
 
   @Post("/:quizId/ratings")
