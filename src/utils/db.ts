@@ -1,6 +1,6 @@
 import { ConnectionOptions, createConnection, Connection, getRepository, getConnection } from "typeorm";
 import { Quiz } from "../entity/Quiz";
-import MOCK_DATA from "../../MOCK_DATA.json";
+
 import { Flashcard } from "../entity/Flashcard";
 import { DBlogger } from "./logger";
 
@@ -22,10 +22,11 @@ export const connectionOptionsLog = (): string => {
 };
 
 export const populateMockdata = async () => {
+  const MOCK_DATA = require("../../MOCK_DATA.json");
   const connection = getConnection();
   await connection.query("TRUNCATE TABLE quiz RESTART IDENTITY CASCADE;");
   const quizReporsitory = getRepository(Quiz);
-  await Promise.all(MOCK_DATA.map(item => quizReporsitory.save(item)));
+  await Promise.all(MOCK_DATA.map((item: object) => quizReporsitory.save(item)));
 };
 
 export const connect = (): Promise<Connection> => createConnection(connectionOptions);
