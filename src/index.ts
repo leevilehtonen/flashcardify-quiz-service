@@ -1,2 +1,3 @@
 import "reflect-metadata";
-import "./app";
+import { setup } from "./app";
+setup();

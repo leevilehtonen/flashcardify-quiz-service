@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: flashcardify-quiz-service-db
+
+  
+  api:
+    build: 
+      context: .
+      target: base
+    volumes:
+      - ./coverage:/app/coverage
+    command: npm run test
+    ports:
+      - 80:80
+    depends_on: 
+      - db
+    environment:
+      NODE_ENV: development
+      SERVICE_PORT: 80
+      DB_USER: postgres
+      DB_PASSWORD: secret
+      DB_HOST: db
+      DB_DATABASE: flashcardify-quiz-service-db
+      DB_PORT: 5432
+
+
+
+  

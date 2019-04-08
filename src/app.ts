@@ -6,26 +6,20 @@ import logger from "./utils/logger";
 import * as DB from "./utils/db";
 import * as Messages from "./utils/messages";
 
-const app: express.Application = express();
+export const app: express.Application = express();
 
-const setup = async () => {
+export const setup = async () => {
+  let db;
   try {
     // Setup DB connections
     logger.info(`Connecting to database with ${DB.connectionOptionsLog()}`);
-    await DB.connect();
+    db = await DB.connect();
     logger.info(Messages.DB_SUCCESS);
-    await DB.populateMockdata();
   } catch (error) {
     logger.error(JSON.stringify({ title: Messages.DB_FAILED, error }));
   }
-
+  let server;
   try {
-    // Setup API
-    app.use((req, res, next) => {
-      setTimeout(() => {
-        next();
-      }, 1000);
-    });
     app.use(expressWinston.logger({ winstonInstance: logger }));
     useExpressServer(app, {
       routePrefix: "/api",
@@ -33,14 +27,11 @@ const setup = async () => {
       controllers: [QuizController],
     });
     app.use(expressWinston.errorLogger({ winstonInstance: logger }));
-    app.listen(process.env.SERVICE_PORT, () => {
+    server = app.listen(process.env.SERVICE_PORT, () => {
       return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT}`);
     });
   } catch (error) {
     logger.error(JSON.stringify({ title: Messages.APP_FAILED, error }));
   }
+  return { db, server };
 };
-
-setup();
-
-export default app;

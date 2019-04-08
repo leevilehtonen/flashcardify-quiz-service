@@ -8,9 +8,11 @@ phases:
       - IMAGE_TAG=${COMMIT_HASH:=latest}
       - echo $IMAGE_TAG
       - echo $IMAGE_REPO_URL
-      - docker -v
   build:
     commands:
+      - echo Testing started on `date`
+      - echo Testing the Docker image... 
+      - docker-compose -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from api --build
       - echo Build started on `date`
       - echo Building the Docker image...          
       - docker build -t $IMAGE_REPO_URL:latest .
