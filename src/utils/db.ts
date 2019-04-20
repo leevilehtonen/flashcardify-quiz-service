@@ -11,7 +11,7 @@ const connectionOptions: ConnectionOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   synchronize: process.env.NODE_ENV === "development" ? true : false,
-  entities: process.env.NODE_ENV === "development" ? ["src/entity/**/*.ts"] : ["src/entity/**/*.js"],
+  entities: process.env.NODE_ENV === "development" ? ["src/entity/**/*.ts"] : ["dist/entity/**/*.js"],
   logging: true,
   logger: new DBlogger(),
 };
