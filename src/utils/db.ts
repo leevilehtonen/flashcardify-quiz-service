@@ -1,6 +1,5 @@
 import { ConnectionOptions, createConnection, Connection, getRepository, getConnection } from "typeorm";
 import { Quiz } from "../entity/Quiz";
-
 import { Flashcard } from "../entity/Flashcard";
 import { DBlogger } from "./logger";
 

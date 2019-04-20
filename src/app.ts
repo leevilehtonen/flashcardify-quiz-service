@@ -30,6 +30,9 @@ export const setup = async () => {
     server = app.listen(process.env.SERVICE_PORT, () => {
       return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT}`);
     });
+    app.get("/", (req, res) => {
+      res.json({ status: "OK" });
+    });
   } catch (error) {
     logger.error(JSON.stringify({ title: Messages.APP_FAILED, error }));
   }
