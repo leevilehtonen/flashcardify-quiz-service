@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - node
+notifications:
+  email: false
 
 services:
   - docker
@@ -11,4 +13,10 @@ before_install:
   - echo $IMAGE_TAG
 
 script:
-  - echo script
+  - echo Testing started on `date`
+  - echo Testing the Docker image... 
+  - docker-compose -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from api --build
+  - echo Build started on `date`
+  - echo Building the Docker image...          
+  - docker build -t $IMAGE_REPO_URL:latest .
+  - docker tag $IMAGE_REPO_URL:latest $IMAGE_REPO_URL:$IMAGE_TAG     
