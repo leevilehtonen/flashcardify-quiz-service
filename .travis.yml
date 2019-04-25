@@ -26,4 +26,10 @@ script:
 - docker build -t $DOCKER_USERNAME/$APP_NAME:latest .
 - docker tag $DOCKER_USERNAME/$APP_NAME:latest registry.heroku.com/$APP_NAME/web
 - docker push registry.heroku.com/$APP_NAME/web
-- heroku container:release web --app=$APP_NAME
+
+deploy:
+  - provider: script
+    script: heroku container:release web --app=$APP_NAME
+    on:
+      branch: master
+
