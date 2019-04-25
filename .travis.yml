@@ -20,6 +20,8 @@ script:
   - docker-compose version
   - docker-compose -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from api --build
   - echo Build started on `date`
-  - echo Building the Docker image...          
-  - docker build -t $IMAGE_REPO_URL:latest .
-  - docker tag $IMAGE_REPO_URL:latest $IMAGE_REPO_URL:$IMAGE_TAG     
+  - echo Building the Docker image...
+  - IMAGE_NAME="$(cut -d'/' -f2 <<< $TRAVIS_REPO_SLUG)"
+  - DOCKER_USERNAME="leevilehtonen"
+  - docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
+  - docker tag $DOCKER_USERNAME/$IMAGE_NAME:latest $DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG     
