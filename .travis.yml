@@ -1,10 +1,20 @@
 language: node_js
 node_js:
 - node
+
+
 notifications:
   email: false
+
+
 services:
 - docker
+
+env:
+  global:
+    secure: YaH2+sUAXvkV9tm99VYxCcPzrhJMRdpoDQ+QqqYIH4huA0DvQnjwJ8NPG7Uym2EX1L7dbL11/+UCs4ycD/oNOKajN+mbBUTe0hyXvxHk8y8k7IGLUAm++OYYXEJ/Vkc4i3mKvUfUg68NIqQ9y9X98ERer7wIyhMtrfwPijiJwRmdgbp8L1Y7BbMLoVgAqvhm5aJX8hxTCX/idySCkn1oBPWYe73kKyYIVzjmEjHZYWeCUFY0ArGDd9s6oT3g6XKuVKpYUQfZkDO9WVWFkqpj/lJ6vou+xWRkJfd+lK+rLiz++ikGQb+TD8BpifApSt6DecB1xeQXWQhjVFkiBZQhc+w/uk579WxnjmNN7iGJSvcF4U+v0oqKzDoKT3ouLyGQ4bPkv7jmjTO9+FPmzpoZ8yPvcqoyIKOGLtXLp4IVbA2bkVISnEE6c2/Pvys6Pp8uXWA9ZdBHDITbXwyA8sqPbcjQFJ/fqepsNhpnXCoxNy6pKWv9UL9AQwOsb7foKiT9vI9RfvDA3mtziSCyo5MU6g3Wrb13t90cudAW8kXG5lRQLlSoBludAzIo0pgszneqalL3ER6ufuvUkn6W8boChZspiT6Bzi6sJ1sY3VrQNVIA1MFVteYTL1KIRVNqwlMwvnlkkjqrZ9AfSY7lkNp/5MoBS6BXzA1M/pd8DStN/XA=
+
+
 before_install:
 - sudo /etc/init.d/postgresql stop
 - COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c 1-7)
@@ -13,23 +23,15 @@ before_install:
 script:
 - echo Testing started on `date`
 - echo Testing the Docker image...
-- docker version
-- docker-compose version
 - docker-compose -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from
   api --build
 - echo Build started on `date`
 - echo Building the Docker image...
 - IMAGE_NAME="$(cut -d'/' -f2 <<< $TRAVIS_REPO_SLUG)"
 - DOCKER_USERNAME="leevilehtonen"
-- heroku
+- docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
 - docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
 - docker tag $DOCKER_USERNAME/$IMAGE_NAME:latest registry.heroku.com/$IMAGE_NAME/web
 - docker push registry.heroku.com/$IMAGE_NAME/web
-
-deploy:
-  provider: heroku
-  api_key:
-    secure: mek989aQYSKrX1ANCiz4NCASt/KJeecXNOR+WnV9ZDwL/zqMz8Jy1EdtL5j0JMLH3IFO0jTuHtfZ8bAczhD6NIn/iomSwV2STUQPjEvCb2YXeAfxHIITgbEr+ML8hwCO4CKMyUjV0jG497iHxbozUbfKPuDH0yIDHdOaAuWFlw64BZynyzSeV04GAVaKYp9TQIOKXAsvOjbECg3L5lVpwBGsDmmG8tuXdwq0uHtdOKcmuTZQ+ESFP3DCDc79pchCqJp7/I49e5prXV/oaaSD61dgltiYQdUG9ydvYO+oLiXTk6Ehu4vKlM/Q243rWqqyJzW4eBH3JUVCi2BSNuSzaIvGi4WVSqY1OZBRNdvH86CKyELIKJQhd+yR+eCtoy4cYK8k+kLv+7RCGQL+wCYOFi6AvqS2UOu0VMRn2pR2xXH5yi877DBtfyfU29HDx7qAkAvumF4Ms/X9fX2wvv2eVCpw7bdHoDF/mhEIbqjJfDEXJQ06wU15w75tQlCgzyPSHrcyepgUfIUsGuK8BTvZhumGLfEhXxIyA5/5g9B+Ue2gix4buggBfLyOdDQVW21AJC3cxHUOikitUfx8UUrCZgSu6v+Ey8bWhmqvzRwwFAC4+8nwvTylA/hSMrK/GYuXokJE7C3YoVRxXM8tSZk6pjIkwsXaDBU6VjloF4OAHpE=
-  app: flashcardify-quiz-service
-  on:
-    repo: leevilehtonen/flashcardify-quiz-service
+- heroku container:release web
+  
