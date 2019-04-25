@@ -27,8 +27,8 @@ export const setup = async () => {
       controllers: [QuizController],
     });
     app.use(expressWinston.errorLogger({ winstonInstance: logger }));
-    server = app.listen(process.env.SERVICE_PORT, () => {
-      return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT}`);
+    server = app.listen(process.env.SERVICE_PORT || process.env.PORT, () => {
+      return logger.info(`${Messages.APP_RUNNING} ${process.env.SERVICE_PORT || process.env.PORT}`);
     });
     app.get("/", (req, res) => {
       res.json({ status: "OK" });
