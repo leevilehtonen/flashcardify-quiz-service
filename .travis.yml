@@ -7,7 +7,7 @@ services:
 - docker
 env:
   global:
-  - secure: YaH2+sUAXvkV9tm99VYxCcPzrhJMRdpoDQ+QqqYIH4huA0DvQnjwJ8NPG7Uym2EX1L7dbL11/+UCs4ycD/oNOKajN+mbBUTe0hyXvxHk8y8k7IGLUAm++OYYXEJ/Vkc4i3mKvUfUg68NIqQ9y9X98ERer7wIyhMtrfwPijiJwRmdgbp8L1Y7BbMLoVgAqvhm5aJX8hxTCX/idySCkn1oBPWYe73kKyYIVzjmEjHZYWeCUFY0ArGDd9s6oT3g6XKuVKpYUQfZkDO9WVWFkqpj/lJ6vou+xWRkJfd+lK+rLiz++ikGQb+TD8BpifApSt6DecB1xeQXWQhjVFkiBZQhc+w/uk579WxnjmNN7iGJSvcF4U+v0oqKzDoKT3ouLyGQ4bPkv7jmjTO9+FPmzpoZ8yPvcqoyIKOGLtXLp4IVbA2bkVISnEE6c2/Pvys6Pp8uXWA9ZdBHDITbXwyA8sqPbcjQFJ/fqepsNhpnXCoxNy6pKWv9UL9AQwOsb7foKiT9vI9RfvDA3mtziSCyo5MU6g3Wrb13t90cudAW8kXG5lRQLlSoBludAzIo0pgszneqalL3ER6ufuvUkn6W8boChZspiT6Bzi6sJ1sY3VrQNVIA1MFVteYTL1KIRVNqwlMwvnlkkjqrZ9AfSY7lkNp/5MoBS6BXzA1M/pd8DStN/XA=
+  - secure: P6Ldz4f+K2u3+oITBvqS73Jc0xqAfHI5ZbRJe1WbGW1U9wP8mxCinDTbDip+24ALD337xnnr6OmUakzOwlQTzeY3BEGPpfgGi7NU3WII0feOwPjP6jAygYScaG4us11XSAcLrx1DqoGXPxn1iyqfkbPP+q38tV8tmxruzlnBdoQtiulHMm7lpvb8kGPSMJVbMM6JGQd73qRT7HDl7kT5BEo4/hVQhOru4DKEHywmFe+R5UCyaSLlTnDptBqoU6FyNVvstHM9ZTCxjameTWLxZv5k+yk8IlShVE9V33LD62etcBUSkfzTBNW4zJxfIMPYyTXUjV5/YJUJpmUJyDeVAKVTe5r5rEudyLWWbvIBS72Z0/FtFopSPyJSNpQCwg3LUTzM8SUWaskZV3/rglYgy+3PH3kU1M+uaTdF94cXePXjzvUFip8DP8YCBQ6SVkQCwKCeeYF/hr7Pog6LLzgTW+Ur4VHXwXQzGcykfcBBBPc04f2ggy58jAvpIYVudBD0StG1qCxjTgoFeQNKbUXEEuWlIp7e3Xx1owV9vkm+O5mIjhfbmaD/ZES3ns/+MNUUg9gYr4BMR43MGfFmO/EhKIQ+0UXD31rOWoqf+PVRS6bL+ou484FueIo05B24XSEfvG23dWOgW7PYy2XjS1PIYp982iiP3GytJ2b1pWqKRNw=
 before_install:
 - sudo /etc/init.d/postgresql stop
 - COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c 1-7)
@@ -22,9 +22,8 @@ script:
 - echo Building the Docker image...
 - APP_NAME="$(cut -d'/' -f2 <<< $TRAVIS_REPO_SLUG)"
 - DOCKER_USERNAME="leevilehtonen"
-- docker login --username=_ --password=$HEROKU_TOKEN registry.heroku.com
+- heroku container:login
 - docker build -t $DOCKER_USERNAME/$APP_NAME:latest .
 - docker tag $DOCKER_USERNAME/$APP_NAME:latest registry.heroku.com/$APP_NAME/web
 - docker push registry.heroku.com/$APP_NAME/web
 - heroku container:release web --app=$APP_NAME
-
