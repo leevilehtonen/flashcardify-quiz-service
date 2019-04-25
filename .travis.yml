@@ -15,6 +15,8 @@ before_install:
 script:
   - echo Testing started on `date`
   - echo Testing the Docker image... 
+  - docker version
+  - docker-compose version
   - docker-compose -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from api --build
   - echo Build started on `date`
   - echo Building the Docker image...          
