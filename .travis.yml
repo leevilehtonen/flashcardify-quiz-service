@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - node
+
+services:
+  - docker
+
+before_install:
+  - COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c 1-7)
+  - IMAGE_TAG=${COMMIT_HASH:=latest}
+  - echo $IMAGE_TAG
+
+script:
+  - echo script
